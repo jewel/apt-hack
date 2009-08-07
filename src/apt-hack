@@ -1,0 +1,128 @@
+#!/usr/bin/ruby -w
+# TODO License (GPL3)
+
+require 'hacking'
+
+SRC = File.join( ENV['HOME'], "work" )
+command = ARGV.shift
+
+if !command || command == 'help' || command == '--help'
+  puts <<"EOF"
+apt-hack is a simple command line tool to assist with making local
+customizations to packages.  The typical workflow is:
+
+apt-hack fork pidgin
+cd ~/src/pidgin*
+vi pidgin/blist.c
+apt-hack build
+apt-hack install
+
+Commands:
+  fork - download the source, install build dependencies
+  build - compile the changed source into a .deb
+  install - install customized .deb, put it on hold
+  upgrade - backup old fork, create a new one, apply your changes
+  uninstall - unhold package, install non-customized version
+  save - generate hack files
+  import - read in hack file(s) and apply them
+EOF
+  exit 1
+end
+
+def error( msg )
+  puts msg
+  exit 1
+end
+
+def run( command, arg )
+  yay = system [ command.split( ' ' ), arg ]
+  error "Could not run command.  (#{command})" unless yay
+end
+
+def find_checkout_dir( package )
+  checkout_dir = nil
+  Dir.glob( "#{SRC}/#{package}-*" ) do |path|
+    next unless File.directory? path
+    checkout_dir = path
+  end
+  return checkout_dir
+end
+
+DETECTION_ERROR = "Expected either a package name or current directory to be under #{SRC.sub ENV['HOME'], '~'}"
+
+def guess_package_from_pwd
+  cwd = Dir.pwd.to_s
+  unless cwd.start_with? SRC
+    error DETECTION_ERROR
+  end
+  cwd.sub! SRC + '/', ''
+  cwd = cwd.split '/'
+  cwd = cwd.shift
+  error DETECTION_ERROR unless cwd && cwd != ''
+  checkout_dir = File.join( SRC, cwd )
+  cwd = cwd.split '-'
+  package = cwd.shift
+  return package, checkout_dir
+end
+
+command = command.to_sym
+
+package = ARGV.shift
+checkout_dir = nil
+
+if command == :fork
+  error 'No package name given' unless package
+  checkout_dir = 'TBD'
+else
+  if package
+    # FIXME find the newest version of the package
+
+    checkout_dir = find_checkout_dir package
+    error "Cannot find a forked version of '#{package}'" unless checkout_dir
+  else
+    package, checkout_dir = guess_package_from_pwd
+  end
+end
+
+puts "package: #{package}, checkout_dir: #{checkout_dir}"
+
+if command == :fork
+  Dir.chdir SRC
+  run "sudo aptitude build-dep", package
+  run "aptitude source '#{package}'"
+  # TODO append "hack" to version
+  # TODO run quilt init
+  chechout_dir = find_checkout_dir package
+  puts "#{package} is now in #{checkout_dir}, happy hacking!"
+  exit
+end
+
+Dir.chdir checkout_dir
+
+case command
+when :build
+  ENV['MAKEFLAGS'] = '-j3' # FIXME autodetect CPU count
+
+  run "dpkg-buildpackage -rfakeroot"
+
+when :install
+  # TODO find right name for built .deb file
+  run "sudo dpkg --install", barf
+  run "sudo aptitude hold", package
+
+when :upgrade
+  # TODO
+
+when :uninstall
+  run "sudo aptitude unhold", package
+  run "sudo aptitude install", package
+
+when :save
+  # TODO
+
+when :import
+  # TODO
+
+else
+  raise "Command '#{command}' is not supported"
+end
