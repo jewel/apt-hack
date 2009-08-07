@@ -1,0 +1,43 @@
+Apt Hack is a tool to help beginners make small changes to programs that come with the operating system, such as pidgin.  It is initially targeted at deb based systems such as Ubuntu.
+
+Once changes have been made they can be shared as .hack files.  Several .hack files can be combined into a single .hacks file.
+
+It will have a command-line tool (apt-hack) and a GUI.  Primary focus will be on the command-line tool.
+
+Relevant Paths:
+
+~/.config/apt-hack/config: Settings file
+~/src/: Default location for forked packages
+~/src/hacks/: Default location for hacks, in $package directory
+~/src/debs/: Default location for compiled packages
+~/src/originals/: Default location for storage of original .tar.gz and .dsc files
+
+File Format:
+
+.hack  A regular git-style patch file with additional information in the header:
+
+ * the exact package name and version the patch was made against.  It may also contain ranges of known working versions.
+ * the original author and his contact information
+ * a description of the functionality the patch provides
+ * names of binary files that should be added or removed (since patches aren't binary safe)
+
+.hacks  A regular tar file containing multiple hacks.  It may contain an optional README file as well as a subdirectory call data/ which contains binary files referenced by the hack files.  It could also contain an example screenshot.
+
+Open Issues:
+
+ * Need to keep track of what the user has changed in order to generate the hack files.  quilt, perhaps?
+ * Need a good example to demonstrate the usefulness of apt-hack.  It needs to be something that is a common annoyance, relatively easy to fix, and not likely to be fixed upstream.  Perhaps:
+  * change keyboard shortcuts in liferea
+  * change pidgin icon location in buddy list
+ * .debhack and .debhacks might be more appropriate file extensions
+
+Future Improvements:
+
+ * Version control the patches for the user?  (The GUI user, for example, might want an undo.)
+ * Create a central repository for hacks that is similar to github so that hacks can be improved, used as dependencies, etc.
+ * Help the user attempt to apply regular .patch files as well.
+
+GUI Ideas:
+
+ * Launch an IDE for GUI users.  This might first require a hack to a particular project to make it IDE ready.
+ * Search source code.
