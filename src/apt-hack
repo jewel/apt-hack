@@ -1,8 +1,6 @@
 #!/usr/bin/ruby -w
 # TODO License (GPL3)
 
-# depends: quilt
-
 SRC = File.join( ENV['HOME'], "work" )
 command = ARGV.shift
 
@@ -94,6 +92,13 @@ if command == :fork
   run "apt-get source", package
   # TODO append "hack" to version
   checkout_dir = find_checkout_dir package
+  Dir.chdir checkout_dir
+  run "git init"
+  run "git add ."
+  run "git commit -m 'initial import'"
+  run "guilt init"
+  puts
+  puts "guilt patch management is ready, see documentation (TODO) for details"
   puts "#{package} is now in #{checkout_dir}, happy hacking!"
   exit
 end
