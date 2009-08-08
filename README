@@ -1,5 +1,9 @@
 Apt Hack is a tool to help beginners make small changes to programs that come with the operating system, such as pidgin.  It is initially targeted at deb based systems such as Ubuntu.
 
+Apt Hack is in an early stage of development.
+
+The license for all files in the repository GPL 3 or (at your option) a later version of the same license, unless otherwise noted in the file itself.
+
 Once changes have been made they can be shared as .hack files.  Several .hack files can be combined into a single .hacks file.
 
 It will have a command-line tool (apt-hack) and a GUI.  Primary focus will be on the command-line tool.
@@ -25,7 +29,10 @@ File Format:
 
 Open Issues:
 
- * Need to keep track of what the user has changed in order to generate the hack files.  quilt, perhaps?
+ * There are many files generated during compile.  Options are:
+   * ship a default .gitignore
+   * build the .gitignore after the first build
+   * let the user deal with the files
  * Need a good example to demonstrate the usefulness of apt-hack.  It needs to be something that is a common annoyance, relatively easy to fix, and not likely to be fixed upstream.  Perhaps:
   * change keyboard shortcuts in liferea
   * change pidgin icon location in buddy list
@@ -35,7 +42,7 @@ Future Improvements:
 
  * Version control the patches for the user?  (The GUI user, for example, might want an undo.)
  * Create a central repository for hacks that is similar to github so that hacks can be improved, used as dependencies, etc.
- * Help the user attempt to apply regular .patch files as well.
+ * Help the user attempt to apply regular .patch files from other sources as well.
 
 GUI Ideas:
 
