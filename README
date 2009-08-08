@@ -43,6 +43,7 @@ Future Improvements:
  * Version control the patches for the user?  (The GUI user, for example, might want an undo.)
  * Create a central repository for hacks that is similar to github so that hacks can be improved, used as dependencies, etc.
  * Help the user attempt to apply regular .patch files from other sources as well.
+ * Immediately start a niced background build after a fork (in a cp -rpl directory?) so that the first build goes faster.
 
 GUI Ideas:
 
