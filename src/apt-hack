@@ -95,7 +95,7 @@ if command == :fork
   Dir.chdir checkout_dir
   run "git init"
   run "git add ."
-  run "git commit -m 'initial import'"
+  run "git commit -m stock"
   run "guilt init"
   puts
   puts "guilt patch management is ready, see documentation (TODO) for details"
