@@ -1,7 +1,6 @@
 #!/usr/bin/ruby -w
 # TODO License (GPL3)
 
-require 'hacking'
 
 SRC = File.join( ENV['HOME'], "work" )
 command = ARGV.shift
@@ -35,7 +34,7 @@ def error( msg )
 end
 
 def run( command, arg )
-  yay = system [ command.split( ' ' ), arg ]
+  yay = system [ command.split( ' ' ), arg ].join(" ")
   error "Could not run command.  (#{command})" unless yay
 end
 
