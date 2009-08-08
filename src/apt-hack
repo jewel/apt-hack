@@ -1,6 +1,8 @@
 #!/usr/bin/ruby -w
 # TODO License (GPL3)
 
+# depends: quilt
+
 SRC = File.join( ENV['HOME'], "work" )
 command = ARGV.shift
 
@@ -91,7 +93,6 @@ if command == :fork
   run "sudo aptitude build-dep", package
   run "apt-get source", package
   # TODO append "hack" to version
-  # TODO run quilt init
   checkout_dir = find_checkout_dir package
   puts "#{package} is now in #{checkout_dir}, happy hacking!"
   exit
@@ -101,9 +102,8 @@ Dir.chdir checkout_dir
 
 case command
 when :build
-  ENV['MAKEFLAGS'] = '-j3' # FIXME autodetect CPU count
-
-  run "dpkg-buildpackage -rfakeroot"
+  CPUS = 2 # FIXME autodetect CPU count
+  run "dpkg-buildpackage -r -uc -b -D -j#{CPUS+1}"
 
 when :install
   # TODO find right name for built .deb file
