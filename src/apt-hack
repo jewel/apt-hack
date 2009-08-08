@@ -32,9 +32,9 @@ def error( msg )
   exit 1
 end
 
-def run( command, arg )
+def run( command, arg=nil )
   args = command.split( ' ' )
-  args.push arg
+  args.push arg if arg
   yay = system( *(args) )
   error "Could not run command: #{command}" unless yay
 end
@@ -89,10 +89,10 @@ puts "package: #{package}, checkout_dir: #{checkout_dir}"
 if command == :fork
   Dir.chdir SRC
   run "sudo aptitude build-dep", package
-  run "aptitude source '#{package}'"
+  run "apt-get source", package
   # TODO append "hack" to version
   # TODO run quilt init
-  chechout_dir = find_checkout_dir package
+  checkout_dir = find_checkout_dir package
   puts "#{package} is now in #{checkout_dir}, happy hacking!"
   exit
 end
