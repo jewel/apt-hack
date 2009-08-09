@@ -95,7 +95,7 @@ if command == :fork
   Dir.chdir checkout_dir
   run "git init"
   run "git add ."
-  run "git commit -m stock"
+  run "git commit -qm stock"
   run "guilt init"
   puts
   puts "guilt patch management is ready, see documentation (TODO) for details"
@@ -108,7 +108,7 @@ Dir.chdir checkout_dir
 case command
 when :build
   CPUS = 2 # FIXME autodetect CPU count
-  run "dpkg-buildpackage -r -uc -b -D -j#{CPUS+1}"
+  run "dpkg-buildpackage -r -nc -uc -b -D -j#{CPUS+1}"
 
 when :install
   # TODO find right name for built .deb file
