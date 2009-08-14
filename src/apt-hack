@@ -90,10 +90,10 @@ if command == :fork
   Dir.chdir SRC
   run "sudo aptitude build-dep", package
   run "apt-get source", package
-  # TODO append "hack" to version
   checkout_dir = find_checkout_dir package
   Dir.chdir checkout_dir
   system "debian/rules", "patch"
+  run "debchange -Ul hack", "Create apt-hack fork"
   run "git init"
   run "git add ."
   run "git commit -qm stock"
@@ -144,10 +144,15 @@ when :install
 when :upgrade
   # TODO
 
+when :uninstall
+  packages = get_packages
+  run "sudo aptitude unhold", *packages
+  run "sudo aptitude remove", *packages
+
 when :unhack
   packages = get_packages
   run "sudo aptitude unhold", *packages
-  run "sudo aptitude purge", *packages
+  run "sudo aptitude remove", *packages
   run "sudo aptitude install", *package
 
 when :save
