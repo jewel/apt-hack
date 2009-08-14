@@ -32,9 +32,9 @@ def error( msg )
   exit 1
 end
 
-def run( command, arg=nil )
+def run( command, *extra )
   args = command.split( ' ' )
-  args.push arg if arg
+  args.push( *extra )
   yay = system( *(args) )
   error "Could not run command: #{command}" unless yay
 end
@@ -129,8 +129,13 @@ when :build
   puts "apt-hack: added build files to .gitignore"
 
 when :install
-  # TODO find right name for built .deb file
-  run "sudo dpkg --install", barf
+  debs = IO.readlines( 'debian/control' ).grep( /^Package: / ) { $'.chomp }
+  debs.map! do |deb|
+    Dir.glob( "#{SRC}/#{deb}_*.deb" )
+  end
+  puts debs
+
+  run "sudo dpkg --install", *(debs.flatten)
   run "sudo aptitude hold", package
 
 when :upgrade
