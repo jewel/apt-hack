@@ -106,6 +106,10 @@ end
 
 Dir.chdir checkout_dir
 
+def get_packages
+  IO.readlines( 'debian/control' ).grep( /^Package: / ) { $'.chomp }
+end
+
 case command
 when :build
   before_files = `git ls-files -o`.split "\n"
@@ -129,21 +133,22 @@ when :build
   puts "apt-hack: added build files to .gitignore"
 
 when :install
-  debs = IO.readlines( 'debian/control' ).grep( /^Package: / ) { $'.chomp }
-  debs.map! do |deb|
-    Dir.glob( "#{SRC}/#{deb}_*.deb" )
+  packages = get_packages
+  debs = packages.map do |p|
+    Dir.glob( "#{SRC}/#{p}_*hack1*.deb" )
   end
-  puts debs
 
   run "sudo dpkg --install", *(debs.flatten)
-  run "sudo aptitude hold", package
+  run "sudo aptitude hold", *packages
 
 when :upgrade
   # TODO
 
-when :uninstall
-  run "sudo aptitude unhold", package
-  run "sudo aptitude install", package
+when :unhack
+  packages = get_packages
+  run "sudo aptitude unhold", *packages
+  run "sudo aptitude purge", *packages
+  run "sudo aptitude install", *package
 
 when :save
   # TODO
