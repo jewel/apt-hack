@@ -1,7 +1,7 @@
 #!/usr/bin/ruby -w
 # TODO License (GPL3)
 
-SRC = File.join( ENV['HOME'], "work" )
+SRC = File.join( ENV['HOME'], "src" )
 command = ARGV.shift
 
 if !command || command == 'help' || command == '--help'
