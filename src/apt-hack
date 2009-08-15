@@ -87,6 +87,9 @@ end
 puts "package: #{package}, checkout_dir: #{checkout_dir}"
 
 if command == :fork
+  unless File.exists? SRC
+    Dir.mkdir SRC
+  end
   Dir.chdir SRC
   run "sudo aptitude build-dep", package
   run "apt-get source", package
